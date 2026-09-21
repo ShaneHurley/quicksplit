@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Fraunces", "Iowan Old Style", "Palatino Linotype", Palatino, serif;
+  --font-body: "Nunito", "Avenir Next", "Segoe UI", sans-serif;
+
+  --color-mint: #7dcbbe;
+  --color-mint-deep: #4fa897;
+  --color-peach: #f0b7a0;
+  --color-sky: #8ec5e8;
+  --color-butter: #f6e7a9;
+  --color-again: #f08a7a;
+
+  --radius-clay: 1.75rem;
+}
+
+/* Light theme (mint / peach / sky wash) */
+:root,
+[data-theme="light"] {
+  --color-canvas: #e8f6f1;
+  --color-canvas-2: #fff6eb;
+  --color-ink: #1f2a2e;
+  --color-muted: #5b6b70;
+  --color-clay: #fffdf8;
+  --color-panel: rgba(255, 253, 248, 0.92);
+  --color-panel-border: rgba(255, 255, 255, 0.65);
+  --color-input: rgba(255, 253, 248, 0.95);
+  --shadow-clay: 8px 8px 20px rgba(31, 42, 46, 0.12),
+    inset -5px -5px 12px rgba(31, 42, 46, 0.08),
+    inset 5px 5px 12px rgba(255, 255, 255, 0.85);
+  --bg-gradient: radial-gradient(1200px 600px at 10% -10%, #dff5ee 0%, transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, #ffe8d6 0%, transparent 50%),
+    linear-gradient(160deg, var(--color-canvas), var(--color-canvas-2));
+}
+
+/* Dark theme — deep charcoal with soft mint/peach accents */
+[data-theme="dark"] {
+  --color-canvas: #12151a;
+  --color-canvas-2: #1a1f27;
+  --color-ink: #e8eef2;
+  --color-muted: #9aa7b0;
+  --color-clay: #232a33;
+  --color-panel: rgba(35, 42, 51, 0.95);
+  --color-panel-border: rgba(255, 255, 255, 0.06);
+  --color-input: #1c222b;
+  --shadow-clay: 10px 12px 28px rgba(0, 0, 0, 0.45),
+    inset -3px -3px 8px rgba(0, 0, 0, 0.35),
+    inset 3px 3px 10px rgba(255, 255, 255, 0.04);
+  --bg-gradient: radial-gradient(1000px 500px at 8% -5%, rgba(125, 203, 190, 0.12) 0%, transparent 55%),
+    radial-gradient(800px 420px at 100% 0%, rgba(240, 183, 160, 0.1) 0%, transparent 50%),
+    linear-gradient(165deg, #0e1116, #171c24 45%, #1a222c);
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  background: var(--bg-gradient);
+  background-attachment: fixed;
+  transition: background 0.35s ease, color 0.25s ease;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.shadow-clay {
+  box-shadow: var(--shadow-clay);
+}
+
+.rounded-clay {
+  border-radius: var(--radius-clay);
+}
+
+.bg-clay {
+  background-color: var(--color-clay);
+}
+
+.bg-panel {
+  background-color: var(--color-panel);
+}
+
+.text-ink {
+  color: var(--color-ink);
+}
+
+.text-muted {
+  color: var(--color-muted);
+}
+
+.text-clay {
+  color: var(--color-clay);
+}
+
+.border-panel {
+  border-color: var(--color-panel-border);
+}

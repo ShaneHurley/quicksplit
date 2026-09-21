@@ -1,0 +1,1 @@
+"""QuickSplit FastAPI application package."""
