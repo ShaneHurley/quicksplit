@@ -31,7 +31,7 @@ class ProfileCreate(BaseModel):
     display_name: str = Field(min_length=1, max_length=80)
     accent_hue: str = "mint"
     avatar_emoji: Optional[str] = None
-    theme: Literal["dark", "light"] = "dark"
+    theme: Literal["dark", "light"] = "light"
     # Any string accepted — no length/complexity rules (empty = no password)
     password: Optional[str] = None
 

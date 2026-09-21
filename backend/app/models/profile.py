@@ -24,8 +24,8 @@ class Profile(Base, UUIDPrimaryKeyMixin, TimestampMixin):
     display_name: Mapped[str] = mapped_column(String(80), nullable=False)
     avatar_emoji: Mapped[Optional[str]] = mapped_column(String(8), nullable=True)
     accent_hue: Mapped[str] = mapped_column(String(32), default="mint", nullable=False)
-    # Site-wide UI theme for this learner — "dark" | "light"
-    theme: Mapped[str] = mapped_column(String(16), default="dark", nullable=False)
+    # Site-wide UI mode for this learner — "dark" | "light" (palette is accent_hue)
+    theme: Mapped[str] = mapped_column(String(16), default="light", nullable=False)
     # PBKDF2 salt$hash; None means unlocked profile (legacy / optional)
     password_hash: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
 

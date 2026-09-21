@@ -35,8 +35,14 @@ export type ImportPreviewCard = {
 
 export type ImportPayload = {
   raw_text: string
-  field_sep: 'tab' | 'comma' | 'custom'
+  field_sep: 'tab' | 'comma' | 'pipe' | 'custom'
   field_sep_custom?: string
-  card_sep: 'newline' | 'semicolon' | 'custom'
+  card_sep: 'newline' | 'semicolon' | 'blankline' | 'custom'
   card_sep_custom?: string
+  skip_header?: boolean
+  column_map?: Array<'front' | 'back' | 'image_url' | 'notes' | 'ignore'>
+  new_set_title?: string
+  new_set_description?: string
+  owner_profile_id?: string
+  accent?: string
 }

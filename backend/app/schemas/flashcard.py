@@ -94,11 +94,19 @@ class ImportPreviewCard(BaseModel):
 
 class ImportRequest(BaseModel):
     raw_text: str = ""
-    field_sep: Literal["tab", "comma", "custom"] = "tab"
+    field_sep: Literal["tab", "comma", "pipe", "custom"] = "tab"
     field_sep_custom: Optional[str] = None
-    card_sep: Literal["newline", "semicolon", "custom"] = "newline"
+    card_sep: Literal["newline", "semicolon", "blankline", "custom"] = "newline"
     card_sep_custom: Optional[str] = None
+    skip_header: bool = False
+    # Explicit column roles in left-to-right order, e.g. ["front","back","image_url","notes"]
+    column_map: Optional[List[Literal["front", "back", "image_url", "notes", "ignore"]]] = None
     preview_only: bool = False
+    # Optional: create a brand-new set while importing (when set_id path is a placeholder)
+    new_set_title: Optional[str] = None
+    new_set_description: str = ""
+    owner_profile_id: Optional[str] = None
+    accent: str = "mint"
 
 
 class ImportResult(BaseModel):

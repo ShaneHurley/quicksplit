@@ -6,6 +6,7 @@ import { ClayCard } from '../../components/ui/ClayCard'
 import { ClayInput } from '../../components/ui/ClayInput'
 import { useProfileStore } from '../../store/profileStore'
 import { createSet, listSets } from './api'
+import { ImportModal } from './ImportModal'
 import type { FlashcardSet } from './types'
 
 export function HomePage() {
@@ -16,6 +17,7 @@ export function HomePage() {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [busy, setBusy] = useState(false)
+  const [showImport, setShowImport] = useState(false)
 
   useEffect(() => {
     if (!profile) return
@@ -44,7 +46,7 @@ export function HomePage() {
   }
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10 pr-28">
+    <div className="mx-auto max-w-5xl px-6 py-10 pr-36">
       <header className="mb-10 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.18em] text-muted">
@@ -53,16 +55,21 @@ export function HomePage() {
           <h1 className="font-display mt-1 text-5xl font-semibold text-ink">QuickSplit</h1>
           <p className="mt-2 text-muted">Browse your sets or start a new one.</p>
         </div>
-        <ClayButton
-          tone="butter"
-          type="button"
-          onClick={() => {
-            setActiveProfile(null)
-            navigate('/')
-          }}
-        >
-          Switch profile
-        </ClayButton>
+        <div className="flex flex-wrap gap-2">
+          <ClayButton tone="sky" type="button" onClick={() => setShowImport(true)}>
+            Import set
+          </ClayButton>
+          <ClayButton
+            tone="butter"
+            type="button"
+            onClick={() => {
+              setActiveProfile(null)
+              navigate('/')
+            }}
+          >
+            Switch profile
+          </ClayButton>
+        </div>
       </header>
 
       <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -75,10 +82,10 @@ export function HomePage() {
             transition={{ delay: i * 0.04 }}
           >
             <Link to={`/sets/${s.id}`}>
-              <ClayCard accent={s.accent} className="h-full p-5 transition hover:-translate-y-0.5">
-                <h2 className="text-xl font-bold">{s.title}</h2>
+              <ClayCard accent={s.accent} className="h-full border border-panel p-5 transition hover:-translate-y-0.5">
+                <h2 className="text-xl font-bold text-ink">{s.title}</h2>
                 <p className="mt-2 line-clamp-2 text-sm text-muted">{s.description || 'No description'}</p>
-                <div className="mt-4 flex gap-3 text-sm font-semibold">
+                <div className="mt-4 flex gap-3 text-sm font-semibold text-ink">
                   <span>{s.card_count} cards</span>
                   <span className="text-mint-deep">{s.due_count} due</span>
                 </div>
@@ -88,8 +95,8 @@ export function HomePage() {
         ))}
       </div>
 
-      <ClayCard className="mt-10 p-6">
-        <h2 className="text-xl font-bold">Add a new set</h2>
+      <ClayCard className="mt-10 border border-panel p-6">
+        <h2 className="text-xl font-bold text-ink">Add a new set</h2>
         <form className="mt-4 grid gap-3 md:grid-cols-[1fr_1fr_auto]" onSubmit={onCreate}>
           <ClayInput
             placeholder="Title"
@@ -106,6 +113,18 @@ export function HomePage() {
           </ClayButton>
         </form>
       </ClayCard>
+
+      {showImport && (
+        <ImportModal
+          ownerProfileId={profile.id}
+          accent={profile.accent_hue}
+          onClose={() => setShowImport(false)}
+          onImported={(newId) => {
+            if (newId) navigate(`/sets/${newId}`)
+            else listSets(profile.id).then(setSets)
+          }}
+        />
+      )}
     </div>
   )
 }

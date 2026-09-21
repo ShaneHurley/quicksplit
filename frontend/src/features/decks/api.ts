@@ -50,11 +50,17 @@ export async function deleteSet(setId: string): Promise<void> {
   await api.delete(`/sets/${setId}`)
 }
 
+type ImportResult = {
+  imported_count: number
+  cards: ImportPreviewCard[]
+  set?: FlashcardSet | null
+}
+
 export async function previewImport(
   setId: string,
   payload: ImportPayload,
-): Promise<{ imported_count: number; cards: ImportPreviewCard[] }> {
-  const { data } = await api.post(`/sets/${setId}/import`, {
+): Promise<ImportResult> {
+  const { data } = await api.post<ImportResult>(`/sets/${setId}/import`, {
     ...payload,
     preview_only: true,
   })
@@ -64,8 +70,24 @@ export async function previewImport(
 export async function importCards(
   setId: string,
   payload: ImportPayload,
-): Promise<{ imported_count: number; cards: ImportPreviewCard[] }> {
-  const { data } = await api.post(`/sets/${setId}/import`, {
+): Promise<ImportResult> {
+  const { data } = await api.post<ImportResult>(`/sets/${setId}/import`, {
+    ...payload,
+    preview_only: false,
+  })
+  return data
+}
+
+export async function previewNewImport(payload: ImportPayload): Promise<ImportResult> {
+  const { data } = await api.post<ImportResult>('/import', {
+    ...payload,
+    preview_only: true,
+  })
+  return data
+}
+
+export async function importNewSet(payload: ImportPayload): Promise<ImportResult> {
+  const { data } = await api.post<ImportResult>('/import', {
     ...payload,
     preview_only: false,
   })

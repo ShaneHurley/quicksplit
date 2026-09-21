@@ -13,11 +13,12 @@ const accents = ['mint', 'peach', 'sky', 'butter'] as const
 export function ProfilePickerPage() {
   const navigate = useNavigate()
   const setActiveProfile = useProfileStore((s) => s.setActiveProfile)
-  const fallbackTheme = useProfileStore((s) => s.fallbackTheme)
+  const fallbackMode = useProfileStore((s) => s.fallbackMode)
+  const fallbackPalette = useProfileStore((s) => s.fallbackPalette)
   const [profiles, setProfiles] = useState<Profile[]>([])
   const [name, setName] = useState('')
   const [password, setPassword] = useState('')
-  const [accent, setAccent] = useState<(typeof accents)[number]>('mint')
+  const [accent, setAccent] = useState<(typeof accents)[number]>(fallbackPalette)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [unlockFor, setUnlockFor] = useState<Profile | null>(null)
@@ -37,7 +38,7 @@ export function ProfilePickerPage() {
     const profile = await createProfile({
       display_name: name.trim(),
       accent_hue: accent,
-      theme: fallbackTheme,
+      theme: fallbackMode,
       password: password || undefined,
     })
     setActiveProfile(profile)
@@ -94,7 +95,7 @@ export function ProfilePickerPage() {
               <button type="button" className="w-full text-left" onClick={() => void pick(p)}>
                 <div className="text-2xl font-bold text-ink">{p.display_name}</div>
                 <div className="mt-1 text-sm text-muted capitalize">
-                  {p.accent_hue} · {p.has_password ? 'locked' : 'open'} · {p.theme} theme
+                  {p.accent_hue} · {p.has_password ? 'locked' : 'open'} · {p.theme} mode
                 </div>
               </button>
             </ClayCard>

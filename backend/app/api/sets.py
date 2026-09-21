@@ -221,6 +221,8 @@ def import_cards(
             field_sep_custom=body.field_sep_custom,
             card_sep=body.card_sep,
             card_sep_custom=body.card_sep_custom,
+            skip_header=body.skip_header,
+            column_map=body.column_map,
         )
     except ValueError as exc:
         raise HTTPException(400, str(exc)) from exc
@@ -245,6 +247,76 @@ def import_cards(
             answer_mode="flip",
         )
         db.add(card)
+        s.card_count += 1
+    db.commit()
+    db.refresh(s)
+    return ImportResult(
+        imported_count=len(parsed),
+        cards=preview,
+        set=SetDetail(
+            id=s.id,
+            title=s.title,
+            description=s.description,
+            accent=s.accent,
+            owner_profile_id=s.owner_profile_id,
+            card_count=s.card_count,
+            created_at=s.created_at,
+            updated_at=s.updated_at,
+            due_count=0,
+            cards=[CardRead.model_validate(c) for c in s.cards],
+        ),
+    )
+
+
+@router.post("/import", response_model=ImportResult, status_code=201)
+def import_new_set(body: ImportRequest, db: Session = Depends(get_db)) -> ImportResult:
+    """Create a new set from pasted data in one step."""
+    title = (body.new_set_title or "").strip() or "Imported set"
+    try:
+        parsed = parse_import_text(
+            body.raw_text,
+            field_sep=body.field_sep,
+            field_sep_custom=body.field_sep_custom,
+            card_sep=body.card_sep,
+            card_sep_custom=body.card_sep_custom,
+            skip_header=body.skip_header,
+            column_map=body.column_map,
+        )
+    except ValueError as exc:
+        raise HTTPException(400, str(exc)) from exc
+
+    preview = [
+        ImportPreviewCard(
+            front=p.front, back=p.back, image_url=p.image_url, notes=p.notes
+        )
+        for p in parsed
+    ]
+    if body.preview_only:
+        return ImportResult(imported_count=0, cards=preview, set=None)
+    if not parsed:
+        raise HTTPException(400, "Nothing to import — check separators and paste format.")
+
+    s = FlashcardSet(
+        title=title,
+        description=body.new_set_description or "",
+        accent=body.accent or "mint",
+        owner_profile_id=body.owner_profile_id,
+        card_count=0,
+    )
+    db.add(s)
+    db.flush()
+    for p in parsed:
+        db.add(
+            TextCard(
+                set_id=s.id,
+                front=p.front,
+                back=p.back,
+                image_url=p.image_url,
+                notes=p.notes,
+                position=s.card_count,
+                answer_mode="flip",
+            )
+        )
         s.card_count += 1
     db.commit()
     db.refresh(s)

@@ -1,24 +1,34 @@
 import { useEffect } from 'react'
-import type { Profile } from '../features/profiles/types'
-import { useProfileStore } from '../store/profileStore'
+import { useProfileStore, type Palette, type ThemeMode } from '../store/profileStore'
 
-/** Apply theme to <html data-theme> and keep profile + local preference in sync. */
-export function applyTheme(theme: 'dark' | 'light') {
-  document.documentElement.setAttribute('data-theme', theme)
+const PALETTES: Palette[] = ['mint', 'peach', 'sky', 'butter']
+
+export function normalizePalette(value: string | null | undefined): Palette {
+  return PALETTES.includes(value as Palette) ? (value as Palette) : 'mint'
+}
+
+export function normalizeMode(value: string | null | undefined): ThemeMode {
+  return value === 'dark' ? 'dark' : 'light'
+}
+
+/** Apply palette + light/dark mode to <html>. */
+export function applyAppearance(mode: ThemeMode, palette: Palette) {
+  document.documentElement.setAttribute('data-mode', mode)
+  document.documentElement.setAttribute('data-palette', palette)
+  // Keep legacy data-theme for any leftover selectors
+  document.documentElement.setAttribute('data-theme', mode)
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const profile = useProfileStore((s) => s.activeProfile)
-  const fallback = useProfileStore((s) => s.fallbackTheme)
+  const fallbackMode = useProfileStore((s) => s.fallbackMode)
+  const fallbackPalette = useProfileStore((s) => s.fallbackPalette)
 
   useEffect(() => {
-    const theme = (profile?.theme as 'dark' | 'light' | undefined) ?? fallback
-    applyTheme(theme === 'light' ? 'light' : 'dark')
-  }, [profile?.theme, fallback])
+    const mode = normalizeMode(profile?.theme ?? fallbackMode)
+    const palette = normalizePalette(profile?.accent_hue ?? fallbackPalette)
+    applyAppearance(mode, palette)
+  }, [profile?.theme, profile?.accent_hue, fallbackMode, fallbackPalette])
 
   return children
-}
-
-export function themeFromProfile(profile: Profile | null): 'dark' | 'light' {
-  return profile?.theme === 'light' ? 'light' : 'dark'
 }

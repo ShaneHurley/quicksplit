@@ -23,7 +23,12 @@ export async function unlockProfile(id: string, password: string): Promise<Profi
 
 export async function updateProfile(
   id: string,
-  input: Partial<{ display_name: string; accent_hue: string; theme: 'dark' | 'light'; password: string }>,
+  input: Partial<{
+    display_name: string
+    accent_hue: string
+    theme: 'dark' | 'light'
+    password: string
+  }>,
 ): Promise<Profile> {
   const { data } = await api.patch<Profile>(`/profiles/${id}`, input)
   return data
